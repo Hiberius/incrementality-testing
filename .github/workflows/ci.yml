@@ -1,0 +1,21 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python3 tests/test_lift.py
+      - name: end to end
+        run: |
+          python3 scripts/lift.py srm --arms "control=50120,treatment=49880"
+          python3 scripts/lift.py lift --control 50120/1204 --treatment 49880/1330
+          python3 scripts/lift.py msprt --control 50120/1204 --treatment 49880/1330
+          python3 scripts/lift.py cuped templates/experiment.example.csv --pre-column pre_28d --post-column post
+          python3 scripts/lift.py mde --baseline 0.024 --lift 0.10
