@@ -1,19 +1,34 @@
-# Incrementality Testing
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/hero-light.svg">
+    <img alt="Incrementality Testing: an Agent Skill for A/B testing and causal measurement in marketing, with SRM checks, mSPRT and CUPED" src="assets/hero-dark.svg" width="100%">
+  </picture>
+</p>
 
-**An Agent Skill for the causal question: did the ad cause the conversion, or take credit
-for it. Sample ratio mismatch, an always-valid sequential test that survives daily
-peeking, CUPED variance reduction, and the geo and holdout designs for channels where you
-cannot randomise users.**
+<h1 align="center">Incrementality Testing</h1>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](LICENSE)
-![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)
-![Zero dependencies](https://img.shields.io/badge/dependencies-0-6E56CF)
+<p align="center"><b>Causal measurement for marketing: sample ratio mismatch, an always-valid sequential test that survives daily peeking, CUPED variance reduction, sample sizing, and geo and holdout designs for channels where you cannot randomise users.</b></p>
 
-```bash
-npx skills add Hiberius/incrementality-testing
-```
+<p align="center">
+<a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-2ea44f.svg"></a>
+  <img alt="Python 3.8+" src="https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-6E56CF">
+  <img alt="No network calls" src="https://img.shields.io/badge/network-never-8f9bb8">
+  <img alt="49 tests" src="https://img.shields.io/badge/tests-49%20passing-2ea44f">
+</p>
+
+<p align="center">
+  <code>npx skills add Hiberius/incrementality-testing</code>
+</p>
+
+<p align="center">
+  <sub>Works with Claude Code, Claude Desktop, Codex, Cursor, Windsurf, OpenClaw and
+  anything else that reads a <code>SKILL.md</code>.</sub>
+</p>
 
 ---
+
 
 ## The same data, two legal answers
 
@@ -45,6 +60,31 @@ not replicate, and it is entirely self-inflicted.
 The test suite proves the fix: twenty peeks under a true null, 200 simulated experiments,
 false positive rate stays at 1%.
 
+## What it does
+
+| Command | What you get |
+|---|---|
+| `srm` | Chi-square check on the split, per-arm deltas, and a hard stop when it fires |
+| `lift` | Absolute and relative lift with a confidence interval and a fixed-horizon p-value |
+| `msprt` | Always-valid p-value from a mixture SPRT: peek as often as you like |
+| `cuped` | Variance reduction from a pre-period covariate, with the effective sample multiplier |
+| `mde` | Sample size per arm for a target lift, alpha and power |
+
+All of it in the standard library: normal CDF and inverse CDF, regularised incomplete
+gamma for the chi-square tail, no SciPy.
+
+
+## How it works inside
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/diagram-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/diagram-light.svg">
+    <img alt="How incrementality testing works: check the split for sample ratio mismatch, then read the p-value your stop rule allows" src="assets/diagram-dark.svg" width="100%">
+  </picture>
+</p>
+
+
 ## Check the split before you read anything
 
 ```bash
@@ -73,19 +113,6 @@ equivalent to a sample     1.40x larger
 The covariate is measured before assignment, so the treatment cannot have touched it,
 which is what keeps the adjustment unbiased.
 
-## What it does
-
-| Command | What you get |
-|---|---|
-| `srm` | Chi-square check on the split, per-arm deltas, and a hard stop when it fires |
-| `lift` | Absolute and relative lift with a confidence interval and a fixed-horizon p-value |
-| `msprt` | Always-valid p-value from a mixture SPRT: peek as often as you like |
-| `cuped` | Variance reduction from a pre-period covariate, with the effective sample multiplier |
-| `mde` | Sample size per arm for a target lift, alpha and power |
-
-All of it in the standard library: normal CDF and inverse CDF, regularised incomplete
-gamma for the chi-square tail, no SciPy.
-
 ## Not significant is not no effect
 
 The confidence interval decides. If it excludes the effect you would act on, you have
@@ -97,8 +124,7 @@ The point estimate alone never tells you which.
 Inside an ad platform you rarely control assignment, and "exposed versus unexposed" is not
 an experiment: the platform chose the exposed group precisely because they were more
 likely to convert. Geo holdout, audience holdout, ghost ads and switchback designs, with
-their failure modes, are in
-[`references/geo-and-holdout.md`](references/geo-and-holdout.md), along with:
+their failure modes, are in the reference, along with:
 
 ```
 incrementality factor = incremental conversions / platform-reported conversions
@@ -106,17 +132,45 @@ incrementality factor = incremental conversions / platform-reported conversions
 
 A factor of 0.4 means the platform claims two and a half times what the campaign caused.
 
+
 ## Documentation
 
 - [`SKILL.md`](SKILL.md) — the skill itself, what the agent reads
-- [`references/experiment-design.md`](references/experiment-design.md) — unit of randomisation, deterministic assignment, power, duration, guardrails, what invalidates a test
-- [`references/reading-results.md`](references/reading-results.md) — SRM, which p-value is legal, CUPED, novelty and primacy, Simpson's paradox, the decision table
-- [`references/geo-and-holdout.md`](references/geo-and-holdout.md) — media incrementality without user-level randomisation
+- [`references/experiment-design.md`](references/experiment-design.md) — unit of randomisation, deterministic assignment, power, duration, guardrails
+- [`references/reading-results.md`](references/reading-results.md) — SRM, which p-value is legal, CUPED, novelty and primacy, Simpson's paradox
+- [`references/geo-and-holdout.md`](references/geo-and-holdout.md) — geo holdout, audience holdout, ghost ads, switchback, incremental CPA
 
-## Related
 
-- [cpa-profit-ops](https://github.com/Hiberius/cpa-profit-ops) — the profit maths these decisions feed
-- [competitor-ad-intelligence](https://github.com/Hiberius/competitor-ad-intelligence) — what to test next
+## Related skills
+
+- **[cpa-profit-ops](https://github.com/Hiberius/cpa-profit-ops)** — the profit maths these decisions feed
+- **[competitor-ad-intelligence](https://github.com/Hiberius/competitor-ad-intelligence)** — what to test next
+- **[lead-delivery-reconciliation](https://github.com/Hiberius/lead-delivery-reconciliation)** — the outcome data your experiment should be measured on
+
+All ten in one install:
+
+```
+/plugin marketplace add Hiberius/hiberius-skills
+```
+
+
+## Work with me
+
+I build the systems these skills came out of: performance marketing infrastructure,
+lead pipelines, ad account tooling, internal automation, and products on the Cloudflare
+edge stack. If you need something like this built properly, I take on freelance and
+contract work.
+
+**[Christian Calabro — github.com/Hiberius](https://github.com/Hiberius)**
+
+Performance marketing · media buying · TypeScript · Cloudflare Workers · Next.js · Python
+
+---
+
+## Contributing
+
+Issues and pull requests welcome. The rule for a change to the skill itself: it has to
+be something you learned by getting it wrong once, not something you read in the docs.
 
 ## License
 
